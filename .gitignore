@@ -222,6 +222,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.vscode/settings.json
 
 # Chutzpah Test files
 _Chutzpah*
