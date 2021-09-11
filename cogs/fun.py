@@ -48,7 +48,7 @@ class Fun(commands.Cog):
     @commands.command(name="randping", aliases=["rp"])
     @commands.has_permissions(manage_guild=True)
     async def rand_ping(self, ctx,  to_ping: opt[int] = 1,
-                        msg: opt[str] = message):
+                        *, msg: opt[str] = message):
         online_members = [member.mention for member in ctx.guild.members
                           if member.is_online() if not member.bot]
         ping_list = random.sample(online_members, to_ping)
