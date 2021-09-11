@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-PREFIX = 'mai '
+PREFIX = '&'
 INTENTS = discord.Intents().all()
 TOKEN = os.environ.get('TOKEN')
 bot = commands.Bot(command_prefix=PREFIX, intents=INTENTS)
