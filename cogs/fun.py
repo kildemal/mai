@@ -3,6 +3,7 @@ from discord.ext import commands
 import json
 import random
 import aiohttp
+from typing import Optional as opt
 
 
 def is_online(self):
@@ -21,7 +22,8 @@ class Fun(commands.Cog):
 
     # Commands
 
-    @commands.command()  # Displays a random anime quote
+    # Displays a random anime quote
+    @commands.command()
     async def aniquote(self, ctx):
         async with aiohttp.ClientSession() as session:
 
@@ -34,16 +36,19 @@ class Fun(commands.Cog):
 
         await ctx.send(quote)
 
-    @commands.command(name="is_online", aliases=["io"])  # Shows if a member is online
+    # Shows if a member is online
+    @commands.command(name="is_online", aliases=["io"])
     async def check_status(self, ctx, member: discord.Member):
         if member.is_online():
             await ctx.send('member online')
         else:
             await ctx.send('member not online')
 
-    @commands.command(name="randping", aliases=["rp"])  # Pings random online members
+    # Pings random online members
+    @commands.command(name="randping", aliases=["rp"])
     @commands.has_permissions(manage_guild=True)
-    async def rand_ping(self, ctx, to_ping=1, msg: str = message):
+    async def rand_ping(self, ctx,  to_ping: opt[int] = 1,
+                        msg: opt[str] = message):
         online_members = [member.mention for member in ctx.guild.members
                           if member.is_online() if not member.bot]
         ping_list = random.sample(online_members, to_ping)
