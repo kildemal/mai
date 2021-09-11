@@ -11,6 +11,10 @@ def is_online(self):
         return True
 
 
+def no_everyone(self):
+    return not any(m in self.message.content for m in ["@here", "@everyone"])
+
+
 message = "Hey, what's going on. Chat looking awfully dead huh?"
 
 discord.Member.is_online = is_online
@@ -54,6 +58,13 @@ class Fun(commands.Cog):
                           if member.is_online() if not member.bot]
         ping_list = random.sample(online_members, to_ping)
         await ctx.send(' '.join(ping_list) + ' ' + msg)
+
+    # Repeats the users message
+    @commands.command(name="say")
+    @commands.check(no_everyone)
+    async def say(self, ctx, *, msg=None):
+        if msg is not None:
+            await ctx.send(msg)
 
 
 def setup(bot):
