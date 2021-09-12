@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import json
 import random
+import typing
+import io
 import aiohttp
 from typing import Optional as opt
 
@@ -66,6 +68,19 @@ class Fun(commands.Cog):
         await ctx.message.delete()
         if msg is not None:
             await ctx.send(msg)
+
+    # Steals emojis
+    @commands.command(name="steal_emoji", aliases=["se"])
+    @commands.has_permissions(manage_emojis=True)
+    async def steal_emoji(self, ctx,
+                          emoji: typing.Union[discord.Emoji, discord.PartialEmoji]):
+        async with aiohttp.ClientSession() as session:
+
+            async with session.get(str(emoji.url)) as url:
+                img = await url.read()
+                created_emoji = await ctx.guild.create_custom_emoji(image=img, name=emoji.name)
+        await session.close()
+        await ctx.send(f'Succesfully created emoji: {created_emoji}')
 
 
 def setup(bot):
