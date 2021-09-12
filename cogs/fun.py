@@ -63,6 +63,7 @@ class Fun(commands.Cog):
     @commands.command(name="say")
     @commands.check(no_everyone)
     async def say(self, ctx, *, msg=None):
+        await ctx.message.delete()
         if msg is not None:
             await ctx.send(msg)
 
