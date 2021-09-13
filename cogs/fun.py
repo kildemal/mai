@@ -2,24 +2,26 @@ import discord
 from discord.ext import commands
 import json
 import random
-import typing
 import io
 import aiohttp
-from typing import Optional as opt
+from typing import Union, Optional as opt
 
 
+# Returns true if member is online
 def is_online(self):
     if self.status == discord.Status.online:
         return True
 
 
+# Returns true if message content has no everyone or here
 def no_everyone(self):
     return not any(m in self.message.content for m in ["@here", "@everyone"])
 
 
+# The default message for the random ping function
 message = "Hey, what's going on. Chat looking awfully dead huh?"
 
-discord.Member.is_online = is_online
+discord.Member.is_online = is_online  # Adds is_online() method to member object
 
 
 class Fun(commands.Cog):
@@ -73,14 +75,24 @@ class Fun(commands.Cog):
     @commands.command(name="steal_emoji", aliases=["se"])
     @commands.has_permissions(manage_emojis=True)
     async def steal_emoji(self, ctx,
-                          emoji: typing.Union[discord.Emoji, discord.PartialEmoji]):
+                          emoji: Union[discord.Emoji, discord.PartialEmoji]):
         async with aiohttp.ClientSession() as session:
-
             async with session.get(str(emoji.url)) as url:
                 img = await url.read()
                 created_emoji = await ctx.guild.create_custom_emoji(image=img, name=emoji.name)
         await session.close()
         await ctx.send(f'Succesfully created emoji: {created_emoji}')
+
+    # Adds emoji from url
+    @commands.command(name="add_emoji", aliases=["ae"])
+    @commands.has_permissions(manage_emojis=True)
+    async def add_emoji(self, ctx, url: str, name: str):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(str(url)) as url:
+                img = await url.read()
+                emoji = await ctx.guild.create_custom_emoji(image=img, name=name)
+        await session.close()
+        await ctx.send(f'Succesfully created emoji: {emoji}')
 
 
 def setup(bot):
