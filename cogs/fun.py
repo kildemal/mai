@@ -75,13 +75,17 @@ class Fun(commands.Cog):
     @commands.command(name="steal_emoji", aliases=["se"])
     @commands.has_permissions(manage_emojis=True)
     async def steal_emoji(self, ctx,
-                          emoji: Union[discord.Emoji, discord.PartialEmoji]):
+                          *emoji: Union[discord.Emoji, discord.PartialEmoji]):
+        created_emojis = []
         async with aiohttp.ClientSession() as session:
-            async with session.get(str(emoji.url)) as url:
-                img = await url.read()
-                created_emoji = await ctx.guild.create_custom_emoji(image=img, name=emoji.name)
+            for emj in emoji:
+                async with session.get(str(emj.url)) as url:
+                    img = await url.read()
+                    created_emoji = await ctx.guild.create_custom_emoji(image=img, name=emj.name)
+                    created_emojis.append(created_emoji)
+
         await session.close()
-        await ctx.send(f'Succesfully created emoji: {created_emoji}')
+        await ctx.send(f'Succesfully created emoji: {" ".join(str(e) for e in created_emojis)}')
 
     # Adds emoji from url
     @commands.command(name="add_emoji", aliases=["ae"])
